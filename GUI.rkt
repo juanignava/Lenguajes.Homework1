@@ -36,11 +36,12 @@
                           [alignment '(left top)]))
 
 ; Vertical Pane 1.2
-(define ver-pane-1.2 (new vertical-pane%
+(define ver-pane-1.2 (new vertical-panel%
                           [parent hor-pane-1]
                           [vert-margin 10]
                           [horiz-margin 10]
-                          [alignment '(center center)]))
+                          [alignment '(center center)]
+                          [style '(border)]))
 
 ; Crupier Cards Pane 1.2.1
 (define hor-pane-1.2.1 (new horizontal-pane%
@@ -64,11 +65,12 @@
                         [alignment '(left top)]))
 
 ; Vertical Pane 2.1
-(define ver-pane-2.1 (new vertical-pane%
+(define ver-pane-2.1 (new vertical-panel%
                           [parent hor-pane-2]
                           [vert-margin 10]
                           [horiz-margin 10]
-                          [alignment '(center center)]))
+                          [alignment '(center center)]
+                          [style '(border)]))
 
 ; Player 1 Cards Pane 2.1.1
 (define hor-pane-2.1.1 (new horizontal-pane%
@@ -78,11 +80,12 @@
                         [alignment '(center center)]))
 
 ; Vertical Pane 2.2
-(define ver-pane-2.2 (new vertical-pane%
+(define ver-pane-2.2 (new vertical-panel%
                           [parent hor-pane-2]
                           [vert-margin 10]
                           [horiz-margin 10]
-                          [alignment '(center center)]))
+                          [alignment '(center center)]
+                          [style '(border)]))
 
 ; Player 1 Cards Pane 2.2.1
 (define hor-pane-2.2.1 (new horizontal-pane%
@@ -92,11 +95,12 @@
                         [alignment '(center center)]))
 
 ; Vertical Pane 2.3
-(define ver-pane-2.3 (new vertical-pane%
+(define ver-pane-2.3 (new vertical-panel%
                           [parent hor-pane-2]
                           [vert-margin 10]
                           [horiz-margin 10]
-                          [alignment '(center center)]))
+                          [alignment '(center center)]
+                          [style '(border)]))
 
 ; Player 1 Cards Pane 2.3.1
 (define hor-pane-2.3.1 (new horizontal-pane%
