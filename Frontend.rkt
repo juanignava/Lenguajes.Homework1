@@ -332,10 +332,6 @@
         ))
 
 
-; Make window visible
-(send my-window show #t)
-
-
 ; ######################
 ; CARD IMAGES DEFINITION
 ; ######################
@@ -452,7 +448,32 @@
 (define k-hearts (read-bitmap (get-pure-port
                                 (string->url "file:/Images/K-hearts.png"))))
 
+; ####################
+; VARIABLES DEFINITION
+; ####################
 
+; Variable name: Players-List.
+; Description: list of all the players.
+(define players-list
+  null)
 
+; Variable name: Shuffled-Deck.
+; Description: list of all shuffled cards.
+(define shuffled-deck
+  (shuffle original-deck))
+  
+  
+; #############
+; MAIN FUNCTION
+; #############
 
+; Function name: BCEJ.
+; Description: this function starts the game.
+; Input: a list.
+; Output: void.
+(define (bCEj players-names)  
+  (bCEj-aux players-names my-window))
 
+(define (bCEj-aux players-names frame)
+  (set! players-list (create-players-list players-names))
+  (send frame show #t))
