@@ -127,7 +127,110 @@
 
 (define (card-image card-txt)
   (cond ( (equal? card-txt "a-c")
-          a-clubs)))
+          a-clubs)
+        ( (equal? card-txt "2-c")
+          2-clubs)
+        ( (equal? card-txt "3-c")
+          3-clubs)
+        ( (equal? card-txt "4-c")
+          4-clubs)
+        ( (equal? card-txt "5-c")
+          5-clubs)
+        ( (equal? card-txt "6-c")
+          6-clubs)
+        ( (equal? card-txt "7-c")
+          7-clubs)
+        ( (equal? card-txt "8-c")
+          8-clubs)
+        ( (equal? card-txt "9-c")
+          9-clubs)
+        ( (equal? card-txt "10-c")
+          10-clubs)
+        ( (equal? card-txt "j-c")
+          j-clubs)
+        ( (equal? card-txt "q-c")
+          q-clubs)
+        ( (equal? card-txt "k-c")
+          k-clubs)
+        ( (equal? card-txt "a-l")
+          a-leaves)
+        ( (equal? card-txt "2-l")
+          2-leaves)
+        ( (equal? card-txt "3-l")
+          3-leaves)
+        ( (equal? card-txt "4-l")
+          4-leaves)
+        ( (equal? card-txt "5-l")
+          5-leaves)
+        ( (equal? card-txt "6-l")
+          6-leaves)
+        ( (equal? card-txt "7-l")
+          7-leaves)
+        ( (equal? card-txt "8-l")
+          8-leaves)
+        ( (equal? card-txt "9-l")
+          9-leaves)
+        ( (equal? card-txt "10-l")
+          10-leaves)
+        ( (equal? card-txt "j-l")
+          j-leaves)
+        ( (equal? card-txt "q-l")
+          q-leaves)
+        ( (equal? card-txt "k-l")
+          k-leaves)
+        ( (equal? card-txt "a-d")
+          a-diamonds)
+        ( (equal? card-txt "2-d")
+          2-diamonds)
+        ( (equal? card-txt "3-d")
+          3-diamonds)
+        ( (equal? card-txt "4-d")
+          4-diamonds)
+        ( (equal? card-txt "5-d")
+          5-diamonds)
+        ( (equal? card-txt "6-d")
+          6-diamonds)
+        ( (equal? card-txt "7-d")
+          7-diamonds)
+        ( (equal? card-txt "8-d")
+          8-diamonds)
+        ( (equal? card-txt "9-d")
+          9-diamonds)
+        ( (equal? card-txt "10-d")
+          10-diamonds)
+        ( (equal? card-txt "j-d")
+          j-diamonds)
+        ( (equal? card-txt "q-d")
+          q-diamonds)
+        ( (equal? card-txt "k-d")
+          k-diamonds)
+        ( (equal? card-txt "a-h")
+          a-hearts)
+        ( (equal? card-txt "2-h")
+          2-hearts)
+        ( (equal? card-txt "3-h")
+          3-hearts)
+        ( (equal? card-txt "4-h")
+          4-hearts)
+        ( (equal? card-txt "5-h")
+          5-hearts)
+        ( (equal? card-txt "6-h")
+          6-hearts)
+        ( (equal? card-txt "7-h")
+          7-hearts)
+        ( (equal? card-txt "8-h")
+          8-hearts)
+        ( (equal? card-txt "9-h")
+          9-hearts)
+        ( (equal? card-txt "10-h")
+          10-hearts)
+        ( (equal? card-txt "j-h")
+          j-hearts)
+        ( (equal? card-txt "q-h")
+          q-hearts)
+        ( (equal? card-txt "k-h")
+          k-hearts)
+        ))
 
 
 ; Make window visible
@@ -159,11 +262,11 @@
                                 (string->url "file:/Images/9-leaves.png"))))
 (define 10-leaves (read-bitmap (get-pure-port
                                 (string->url "file:/Images/10-leaves.png"))))
-(define J-leaves (read-bitmap (get-pure-port
+(define j-leaves (read-bitmap (get-pure-port
                                 (string->url "file:/Images/J-leaves.png"))))
-(define Q-leaves (read-bitmap (get-pure-port
+(define q-leaves (read-bitmap (get-pure-port
                                 (string->url "file:/Images/Q-leaves.png"))))
-(define K-leaves (read-bitmap (get-pure-port
+(define k-leaves (read-bitmap (get-pure-port
                                 (string->url "file:/Images/K-leaves.png"))))
 
 ; DIAMONDS
@@ -187,11 +290,11 @@
                                 (string->url "file:/Images/9-diamonds.png"))))
 (define 10-diamonds (read-bitmap (get-pure-port
                                 (string->url "file:/Images/10-diamonds.png"))))
-(define J-diamonds (read-bitmap (get-pure-port
+(define j-diamonds (read-bitmap (get-pure-port
                                 (string->url "file:/Images/J-diamonds.png"))))
-(define Q-diamonds (read-bitmap (get-pure-port
+(define q-diamonds (read-bitmap (get-pure-port
                                 (string->url "file:/Images/Q-diamonds.png"))))
-(define K-diamonds (read-bitmap (get-pure-port
+(define k-diamonds (read-bitmap (get-pure-port
                                 (string->url "file:/Images/K-diamonds.png"))))
 
 ; CLUBS
@@ -215,11 +318,11 @@
                                 (string->url "file:/Images/9-clubs.png"))))
 (define 10-clubs (read-bitmap (get-pure-port
                                 (string->url "file:/Images/10-clubs.png"))))
-(define J-clubs (read-bitmap (get-pure-port
+(define j-clubs (read-bitmap (get-pure-port
                                 (string->url "file:/Images/J-clubs.png"))))
-(define Q-clubs (read-bitmap (get-pure-port
+(define q-clubs (read-bitmap (get-pure-port
                                 (string->url "file:/Images/Q-clubs.png"))))
-(define K-clubs (read-bitmap (get-pure-port
+(define k-clubs (read-bitmap (get-pure-port
                                 (string->url "file:/Images/K-clubs.png"))))
 
 ; HEARTS
@@ -243,11 +346,11 @@
                                 (string->url "file:/Images/9-hearts.png"))))
 (define 10-hearts (read-bitmap (get-pure-port
                                 (string->url "file:/Images/10-hearts.png"))))
-(define J-hearts (read-bitmap (get-pure-port
+(define j-hearts (read-bitmap (get-pure-port
                                 (string->url "file:/Images/J-hearts.png"))))
-(define Q-hearts (read-bitmap (get-pure-port
+(define q-hearts (read-bitmap (get-pure-port
                                 (string->url "file:/Images/Q-hearts.png"))))
-(define K-hearts (read-bitmap (get-pure-port
+(define k-hearts (read-bitmap (get-pure-port
                                 (string->url "file:/Images/K-hearts.png"))))
 
 ; DECK
