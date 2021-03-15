@@ -1,5 +1,9 @@
 #lang racket
 
+; #######
+; IMPORTS
+; #######
+
 ; Required libraries.
 (require racket/gui)
 (require racket/draw
@@ -66,6 +70,13 @@
                           [horiz-margin 10]
                           [alignment '(center center)]))
 
+; Player 1 Cards Pane 2.1.1
+(define hor-pane-2.1.1 (new horizontal-pane%
+                        [parent ver-pane-2.1]
+                        [vert-margin 10]
+                        [horiz-margin 10]
+                        [alignment '(center center)]))
+
 ; Vertical Pane 2.2
 (define ver-pane-2.2 (new vertical-pane%
                           [parent hor-pane-2]
@@ -73,12 +84,26 @@
                           [horiz-margin 10]
                           [alignment '(center center)]))
 
+; Player 1 Cards Pane 2.2.1
+(define hor-pane-2.2.1 (new horizontal-pane%
+                        [parent ver-pane-2.2]
+                        [vert-margin 10]
+                        [horiz-margin 10]
+                        [alignment '(center center)]))
+
 ; Vertical Pane 2.3
 (define ver-pane-2.3 (new vertical-pane%
                           [parent hor-pane-2]
                           [vert-margin 10]
                           [horiz-margin 10]
                           [alignment '(center center)]))
+
+; Player 1 Cards Pane 2.3.1
+(define hor-pane-2.3.1 (new horizontal-pane%
+                        [parent ver-pane-2.3]
+                        [vert-margin 10]
+                        [horiz-margin 10]
+                        [alignment '(center center)]))
                         
 ; ############
 ; GUI ELEMENTS
@@ -114,11 +139,79 @@
                          [min-height 30]
                          [font (make-object font% 15 'default 'normal 'normal)]))
 
+; Crupier name
+(define crupier-name (new message%
+                          [parent ver-pane-1.2]
+                          [label "Crupier"]
+                          [font (make-object font% 15 'default 'normal 'normal)]))
+
+; Crupier total
+(define crupier-total (new message%
+                          [parent ver-pane-1.2]
+                          [label "Total : ___"]
+                          [font (make-object font% 15 'default 'normal 'normal)]))
+
+; Palyer 1 name
+(define player1-name (new message%
+                          [parent ver-pane-2.1]
+                          [label "Player 1"]
+                          [font (make-object font% 15 'default 'normal 'normal)]))
+
+; Player 1 total
+(define player1-total (new message%
+                          [parent ver-pane-2.1]
+                          [label "Total : ___"]
+                          [font (make-object font% 15 'default 'normal 'normal)]))
+
+; Palyer 2 name
+(define player2-name (new message%
+                          [parent ver-pane-2.2]
+                          [label "Player 2"]
+                          [font (make-object font% 15 'default 'normal 'normal)]))
+
+; Player 2 total
+(define player2-total (new message%
+                          [parent ver-pane-2.2]
+                          [label "Total : ___"]
+                          [font (make-object font% 15 'default 'normal 'normal)]))
+; Palyer 3 name
+(define player3-name (new message%
+                          [parent ver-pane-2.3]
+                          [label "Player 3"]
+                          [font (make-object font% 15 'default 'normal 'normal)]))
+
+; Player 3 total
+(define player3-total (new message%
+                          [parent ver-pane-2.3]
+                          [label "Total : ___"]
+                          [font (make-object font% 15 'default 'normal 'normal)]))
+
+; Deck image
+(define deck (read-bitmap (get-pure-port
+                                (string->url "file:/Images/deck.png"))))
+
+(void (new message%
+           [parent ver-pane-1.3]
+           [label deck]))
+
+; Cards in deck
+(define cards-left (new message%
+                          [parent ver-pane-1.3]
+                          [label "__ cards left"]
+                          [font (make-object font% 25 'default 'normal 'normal)]))
+
 
 ; Add Cards to a Player
 (define (add-card player-number card-txt)
   (cond ( (equal? player-number 0)
-          (add-card-aux hor-pane-1.2.1 card-txt))))
+          (add-card-aux hor-pane-1.2.1 card-txt))
+        ( (equal? player-number 1)
+          (add-card-aux hor-pane-2.1.1 card-txt))
+        ( (equal? player-number 2)
+          (add-card-aux hor-pane-2.2.1 card-txt))
+        ( (equal? player-number 3)
+          (add-card-aux hor-pane-2.3.1 card-txt))
+        ))
 
 (define (add-card-aux pane card)
   (void (new message%
@@ -353,9 +446,7 @@
 (define k-hearts (read-bitmap (get-pure-port
                                 (string->url "file:/Images/K-hearts.png"))))
 
-; DECK
 
-(define deck (read-bitmap (get-pure-port
-                                (string->url "file:/Images/deck.png"))))
+
 
 
