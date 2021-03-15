@@ -331,7 +331,6 @@
           k-hearts)
         ))
 
-
 ; ######################
 ; CARD IMAGES DEFINITION
 ; ######################
@@ -461,8 +460,22 @@
 ; Description: list of all shuffled cards.
 (define shuffled-deck
   (shuffle original-deck))
-  
-  
+
+; Variable name: Player1-Name-Variable.
+; Description: name of the first player.
+(define player1-name-variable
+  null)
+
+; Variable name: Player2-Name-Variable.
+; Description: name of the second player.
+(define player2-name-variable
+  null)
+
+; Variable name: Player1-Name-Variable.
+; Description: name of the third player.
+(define player3-name-variable
+  null)
+
 ; #############
 ; MAIN FUNCTION
 ; #############
@@ -475,5 +488,19 @@
   (bCEj-aux players-names my-window))
 
 (define (bCEj-aux players-names frame)
+  
   (set! players-list (create-players-list players-names))
+
+  (cond ((equal? (length players-names) 1)
+         (set! player1-name-variable (car players-names)))
+
+        ((equal? (length players-names) 2)
+         (set! player1-name-variable (car players-names))
+         (set! player2-name-variable (cadr players-names)))
+
+        (else
+         (set! player1-name-variable (car players-names))
+         (set! player2-name-variable (cadr players-names))
+         (set! player3-name-variable (caddr players-names))))     
+  
   (send frame show #t))

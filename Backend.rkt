@@ -13,10 +13,10 @@
 ; Symbol-Value
 (provide original-deck)
 (define original-deck
-  '(a-c 2-c 3-c 4-c 5-c 6-c 7-c 8-c 9-c 10-c j-c q-c k-c
-    a-l 2-l 3-l 4-l 5-l 6-l 7-l 8-l 9-l 10-l j-l q-l k-l
-    a-d 2-d 3-d 4-d 5-d 6-d 7-d 8-d 9-d 10-d j-d q-d k-d
-    a-h 2-h 3-h 4-h 5-h 6-h 7-h 8-h 9-h 10-h j-h q-h k-h))
+  '("a-c" "2-c" "3-c" "4-c" "5-c" "6-c" "7-c" "8-c" "9-c" "10-c" "j-c" "q-c" "k-c"
+    "a-l" "2-l" "3-l" "4-l" "5-l" "6-l" "7-l" "8-l" "9-l" "10-l" "j-l" "q-l" "k-l"
+    "a-d" "2-d" "3-d" "4-d" "5-d" "6-d" "7-d" "8-d" "9-d" "10-d" "j-d" "q-d" "k-d"
+    "a-h" "2-h" "3-h" "4-h" "5-h" "6-h" "7-h" "8-h" "9-h" "10-h" "j-h" "q-h" "k-h"))
 
 ; #########
 ; FUNCTIONS
@@ -26,6 +26,7 @@
 ; Description: this function is in charge of count how many elements a given list has.
 ; Input: a list.
 ; Output: an integer.
+(provide length)
 (define (length list)
 
   (cond ((null? list)
@@ -38,6 +39,7 @@
 ; Description: this function returns the first element of the given list.
 ; Input: a list.
 ; Output: a list.
+(provide get-crupier)
 (define (get-crupier players-list)
   (car players-list))
 
@@ -45,6 +47,7 @@
 ; Description: this function returns the second element of the given list.
 ; Input: a list.
 ; Output: a list.
+(provide get-player1)
 (define (get-player1 players-list)
   (cadr players-list))
 
@@ -52,6 +55,7 @@
 ; Description: this function returns the third element of the given list.
 ; Input: a list.
 ; Output: a list.
+(provide get-player2)
 (define (get-player2 players-list)
   (caddr players-list))
 
@@ -59,6 +63,7 @@
 ; Description: this function returns the fourth element of the given list.
 ; Input: a list.
 ; Output: a list.
+(provide get-player3)
 (define (get-player3 players-list)
   (cadddr players-list))
 
@@ -117,4 +122,28 @@
                (list 1 '() 0 (get-player1 (append '("-") players-list)))
                (list 2 '() 0 (get-player2 (append '("-") players-list)))
                (list 3 '() 0 (get-player3 (append '("-") players-list)))))))
- 
+
+; Function name: Add-Card-To-Player.
+; Description: this function adds the given card to the specified player.
+; Input: a list, an integer and a string.
+; Output: a list.
+(provide add-card-to-player)
+(define (add-card-to-player players-list player-number card)
+  (add-card-to-player-aux players-list player-number (list card)))
+
+(define (add-card-to-player-aux players-list player-number card)
+
+  (cond ((null? players-list)
+         '())
+
+        ((equal? player-number (get-player-number (car players-list)))
+         (cons (list (get-player-number (car players-list))
+                     (append (get-player-cards (car players-list))
+                           card)
+                     (get-player-stay-bit (car players-list))
+                     (get-player-name (car players-list)))
+               (add-card-to-player-aux (cdr players-list) player-number card)))
+
+        (else
+         (cons (car players-list)
+               (add-card-to-player-aux (cdr players-list) player-number card)))))
