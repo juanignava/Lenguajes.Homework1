@@ -1,13 +1,15 @@
-#lang racket
+#lang racket/gui
 
 ; #######
 ; IMPORTS
 ; #######
 
-; Required libraries.
-(require racket/gui)
+; Required library.
 (require racket/draw
-           net/url)
+         net/url)
+
+; Requiered file.
+(require "Backend.rkt")
 
 ; Main Window
 (define my-window (new frame%
