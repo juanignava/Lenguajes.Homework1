@@ -176,23 +176,17 @@
 (provide create-players-list)
 (define (create-players-list players-list)
     
-  (cond ((null? players-list)
-         "Error: no hay suficientes jugadores")
-
-        ((> (length players-list) 3)
-         "Error: solo se permiten 3 jugadores")        
-
-        ((equal? (length players-list) 1)
-         (list (list 0 '() 0 "Crupier")
+  (cond ((equal? (length players-list) 1)
+         (list (list 0 '() 0 'Crupier)
                (list 1 '() 0 (get-player1 (append '("-") players-list)))))
 
         ((equal? (length players-list) 2)
-         (list (list 0 '() 0 "Crupier")
+         (list (list 0 '() 0 'Crupier)
                (list 1 '() 0 (get-player1 (append '("-") players-list)))
                (list 2 '() 0 (get-player2 (append '("-") players-list)))))
 
         (else
-         (list (list 0 '() 0 "Crupier")
+         (list (list 0 '() 0 'Crupier)
                (list 1 '() 0 (get-player1 (append '("-") players-list)))
                (list 2 '() 0 (get-player2 (append '("-") players-list)))
                (list 3 '() 0 (get-player3 (append '("-") players-list)))))))

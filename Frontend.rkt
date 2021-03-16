@@ -79,14 +79,14 @@
 ; Output: void.
 (define (next-button-response button event)
 
-  (cond ((>= current-player 3)
+  (cond ((>= current-player (- (length players-list) 1))
          (set! current-player 0))
 
         (else
          (set! current-player (+ current-player 1)))))
 
 ; Function name: Take-Button-Response.
-; Description: this is the action of the take-button and is responsible for giving new cards tod the players and delete them from the deck. 
+; Description: this is the action of the take-button and is responsible for giving new cards to the players and delete them from the deck. 
 ; Input: a button instance and a clicked event.
 ; Output: void.
 (define (take-button-response button event)  
@@ -173,7 +173,7 @@
                           [vert-margin 10]
                           [horiz-margin 10]
                           [alignment '(center center)]
-                          [style '(border)]))
+                          [style '(border deleted)]))
 
 ; Player 1 Cards Pane 2.2.1
 (define hor-pane-2.2.1 (new horizontal-pane%
@@ -188,7 +188,7 @@
                           [vert-margin 10]
                           [horiz-margin 10]
                           [alignment '(center center)]
-                          [style '(border)]))
+                          [style '(border deleted)]))
 
 ; Player 1 Cards Pane 2.3.1
 (define hor-pane-2.3.1 (new horizontal-pane%
@@ -239,6 +239,11 @@
                           [parent ver-pane-1.2]
                           [label "Crupier"]
                           [font (make-object font% 15 'default 'normal 'normal)]))
+; Player 1 name
+(define player1-name (new message%
+                          [parent ver-pane-2.1]
+                          [label "Player 1"]
+                          [font (make-object font% 15 'default 'normal 'normal)]))
 
 ; Crupier total
 (define crupier-total (new message%
@@ -246,11 +251,6 @@
                           [label "Total : ___"]
                           [font (make-object font% 15 'default 'normal 'normal)]))
 
-; Palyer 1 name
-(define player1-name (new message%
-                          [parent ver-pane-2.1]
-                          [label "Player 1"]
-                          [font (make-object font% 15 'default 'normal 'normal)]))
 
 ; Player 1 total
 (define player1-total (new message%
@@ -281,6 +281,7 @@
                           [label "Total : ___"]
                           [font (make-object font% 15 'default 'normal 'normal)]))
 
+
 ; Deck image
 (define deck (read-bitmap (get-pure-port
                                 (string->url "file:/Images/deck.png"))))
@@ -296,7 +297,10 @@
                           [font (make-object font% 25 'default 'normal 'normal)]))
 
 
-; Add Cards to a Player
+; Function name: add-card.
+; Description: This function adds a card to the player box in the GUI based on the cards saved on the list.
+; Input: The number of the player and the name of the card.
+; Output: void.
 (define (add-card player-number card-txt)
   (cond ( (equal? player-number 0)
           (add-card-aux hor-pane-1.2.1 card-txt))
@@ -307,12 +311,16 @@
         ( (equal? player-number 3)
           (add-card-aux hor-pane-2.3.1 card-txt))
         ))
-
+; Auxiliar function of add-card
 (define (add-card-aux pane card)
   (void (new message%
              [parent pane]
              [label (card-image card)])))
 
+; Function name: card-image
+; Description: Returns the image of the card given the name of it.
+; Input: card name as a a text.
+; Output: a bitmap that represents the card image.
 (define (card-image card-txt)
   (cond ( (equal? card-txt "a-c")
           a-clubs)
@@ -548,19 +556,46 @@
   (bCEj-aux players-names my-window))
 
 (define (bCEj-aux players-names frame)
+  (cond ((null? players-names)
+         "Error")
+        ((> (length players-names) 3)
+         "Error: solo se permiten 3 jugadores")
+        ( else
+          (set! players-list (create-players-list players-names))
+
+          (cond ((equal? (length players-names) 1)
+                 (set! player1-name-variable (car players-names)))
+
+                ((equal? (length players-names) 2)
+                 (set! player1-name-variable (car players-names))
+                 (set! player2-name-variable (cadr players-names)))
+
+                (else
+                 (set! player1-name-variable (car players-names))
+                 (set! player2-name-variable (cadr players-names))
+                 (set! player3-name-variable (caddr players-names))))     
   
-  (set! players-list (create-players-list players-names))
+          (add-names (length players-names))
+          (send frame show #t))))
 
-  (cond ((equal? (length players-names) 1)
-         (set! player1-name-variable (car players-names)))
+(define (add-names num-of-players)
+  (cond ( (= num-of-players 1)
+          (send player1-name set-label player1-name-variable))
+        
+        ( (= num-of-players 2)
+          (send player1-name set-label player1-name-variable)
+          (send player2-name set-label player2-name-variable)
+          (send hor-pane-2 add-child ver-pane-2.2))
+        
+        ( (= num-of-players 3)
+          (send player1-name set-label player1-name-variable)
+          (send player2-name set-label player2-name-variable)
+          (send hor-pane-2 add-child ver-pane-2.2)
+          (send player3-name set-label player3-name-variable)
+          (send hor-pane-2 add-child ver-pane-2.3))))
 
-        ((equal? (length players-names) 2)
-         (set! player1-name-variable (car players-names))
-         (set! player2-name-variable (cadr players-names)))
+          
 
-        (else
-         (set! player1-name-variable (car players-names))
-         (set! player2-name-variable (cadr players-names))
-         (set! player3-name-variable (caddr players-names))))     
-  
-  (send frame show #t))
+
+
+          
