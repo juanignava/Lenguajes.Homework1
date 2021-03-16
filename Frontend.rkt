@@ -19,6 +19,26 @@
                        [style '(no-resize-border)]
                        [alignment '(left top)]))
 
+; #########
+; FUNCTIONS
+; #########
+
+(define (add-names num-of-players)
+  (cond ( (= num-of-players 1)
+          (send player1-name set-label player1-name-variable))
+        
+        ( (= num-of-players 2)
+          (send player1-name set-label player1-name-variable)
+          (send player2-name set-label player2-name-variable)
+          (send hor-pane-2 add-child ver-pane-2.2))
+        
+        ( (= num-of-players 3)
+          (send player1-name set-label player1-name-variable)
+          (send player2-name set-label player2-name-variable)
+          (send hor-pane-2 add-child ver-pane-2.2)
+          (send player3-name set-label player3-name-variable)
+          (send hor-pane-2 add-child ver-pane-2.3))))
+
 ; ####################
 ; VARIABLES DEFINITION
 ; ####################
@@ -52,22 +72,6 @@
 ; Description: shows the player whi has the current turn.
 (define current-player
   0)
-
-; #########
-; FUNCTIONS
-; #########
-
-; Function name: Get-Card.
-; Description: this function returns the last card given to a player.
-; Input: a list and an integer.
-; Output: a string.
-(define (get-card players-list player-number)
-
-  (cond ((equal? player-number (get-player-number (car players-list)))
-         (car (get-player-cards (car players-list))))
-
-        (else
-         (get-card (cdr players-list) player-number))))
 
 ; ################
 ; BUTTON RESPONSES
@@ -577,25 +581,4 @@
   
           (add-names (length players-names))
           (send frame show #t))))
-
-(define (add-names num-of-players)
-  (cond ( (= num-of-players 1)
-          (send player1-name set-label player1-name-variable))
-        
-        ( (= num-of-players 2)
-          (send player1-name set-label player1-name-variable)
-          (send player2-name set-label player2-name-variable)
-          (send hor-pane-2 add-child ver-pane-2.2))
-        
-        ( (= num-of-players 3)
-          (send player1-name set-label player1-name-variable)
-          (send player2-name set-label player2-name-variable)
-          (send hor-pane-2 add-child ver-pane-2.2)
-          (send player3-name set-label player3-name-variable)
-          (send hor-pane-2 add-child ver-pane-2.3))))
-
-          
-
-
-
-          
+      

@@ -83,13 +83,6 @@
 (define k-cards
   '("k-c" "k-l" "k-d" "k-h"))
 
-
-
-
-
-
-
-
 ; #########
 ; FUNCTIONS
 ; #########
@@ -240,7 +233,7 @@
          (member? card (cdr card-list)))))
 
 ; Function name: Set-Stay-To-Player.
-; Description: this function change teh stay bit of the plsyer to 1.
+; Description: this function change the stay bit of the plsyer to 1.
 ; Input: a list and an integer.
 ; Output: a list.
 (provide set-stay-to-player)
@@ -260,66 +253,105 @@
          (cons (car players-list)
                (set-stay-to-player (cdr players-list) player-number)))))
 
-; Function name: Have-A?.
-; Description: this function checks if the received player has an As card. 
-; Input: a list.
-; Output: a boolean.
-(define (have-a? player)
-  (have-a?-aux (get-player-cards player)))
+; Function name: Get-Card.
+; Description: this function returns the last card given to a player.
+; Input: a list and an integer.
+; Output: a string.
+(provide get-card)
+(define (get-card players-list player-number)
 
-(define (have-a?-aux card-list)
-
-  (cond ((null? card-list)
-         #f)
-
-        ((member? (car card-list) a-cards)
-         #t)
+  (cond ((equal? player-number (get-player-number (car players-list)))
+         (car (get-player-cards (car players-list))))
 
         (else
-         (have-a?-aux (cdr card-list)))))
+         (get-card (cdr players-list) player-number))))
 
+; Function name: Get-Card.
+; Description: this function checks if the received player is already stay.
+; Input: a list and an integer.
+; Output: a boolean.
+(provide stay?)
+(define (stay? players-list player-number)
+
+  (cond ((equal? (get-player-number (car players-list)) player-number)
+
+         (cond ((equal? (get-player-stay-bit (car players-list)) 1)
+                #t)
+
+               (else
+                #f)))
+
+         (else
+          (stay? (cdr players-list) player-number))))
+
+; Function name: Organize-Cards.
+; Description: this function is in charge of organizing the received card-list so that the As cards end up at the end of the list. 
+; Input: a list.
+; Output: a list.
+(define (organize-cards card-list)
+  (organize-cards-aux card-list '()))
+
+(define (organize-cards-aux card-list organized-list)
+
+  (cond ((null? card-list)
+         organized-list)
+
+        ((member? (car card-list) a-cards)
+         (organize-cards-aux (cdr card-list)
+                             (append organized-list
+                                     (list (car card-list)))))
+
+        (else
+         (organize-cards-aux (cdr card-list)
+                             (append (list (car card-list))
+                                     organized-list)))))
+                                
 ; Function name: Check-Score.
-; Description: this function returns the score received from the player based on his cards. 
+; Description: this function returns the score from the received player based on his cards. 
 ; Input: a list.
 ; Output: an integer.
 (define (check-score player)
-  (check-score-aux (get-player-cards player)))
+  (check-score-aux (organize-cards (get-player-cards player)) 0))
 
-(define (check-score-aux card-list)
+(define (check-score-aux card-list score)
 
   (cond ((null? card-list)
-         0)
-
-        ; CHECK BECAUSE THE AS COULD REPRESENT A 1 OR AN 11, THE PLAYER DECIDES.
+         score)
+        
         ((member? (car card-list) a-cards)
-         (+ 1 (check-score-aux (cdr card-list))))
+
+         (cond ((> (+ score 11) 21)
+                (check-score-aux (cdr card-list) (+ 1 score)))
+
+               (else
+                (check-score-aux (cdr card-list) (+ 11 score)))))        
 
         ((member? (car card-list) 2-cards)
-         (+ 2 (check-score-aux (cdr card-list))))
+         (check-score-aux (cdr card-list) (+ 2 score)))        
 
         ((member? (car card-list) 3-cards)
-         (+ 3 (check-score-aux (cdr card-list))))
+         (check-score-aux (cdr card-list) (+ 3 score)))
 
         ((member? (car card-list) 4-cards)
-         (+ 4 (check-score-aux (cdr card-list))))
+         (check-score-aux (cdr card-list) (+ 4 score)))
 
         ((member? (car card-list) 5-cards)
-         (+ 5 (check-score-aux (cdr card-list))))
+         (check-score-aux (cdr card-list) (+ 5 score)))
 
         ((member? (car card-list) 6-cards)
-         (+ 6 (check-score-aux (cdr card-list))))
+         (check-score-aux (cdr card-list) (+ 6 score)))
 
         ((member? (car card-list) 7-cards)
-         (+ 7 (check-score-aux (cdr card-list))))
+         (check-score-aux (cdr card-list) (+ 7 score)))
 
         ((member? (car card-list) 8-cards)
-         (+ 8 (check-score-aux (cdr card-list))))
+         (check-score-aux (cdr card-list) (+ 8 score)))
 
         ((member? (car card-list) 9-cards)
-         (+ 9 (check-score-aux (cdr card-list))))
+         (check-score-aux (cdr card-list) (+ 9 score)))
 
         ((or (member? (car card-list) 10-cards)
              (member? (car card-list) j-cards)
              (member? (car card-list) q-cards)
              (member? (car card-list) k-cards))
-         (+ 10 (check-score-aux (cdr card-list)))))) 
+         (check-score-aux (cdr card-list) (+ 10 score)))))
