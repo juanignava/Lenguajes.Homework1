@@ -19,6 +19,74 @@
                        [style '(no-resize-border)]
                        [alignment '(left top)]))
 
+; ####################
+; VARIABLES DEFINITION
+; ####################
+
+; Variable name: Players-List.
+; Description: list of all the players.
+(define players-list
+  null)
+
+; Variable name: Shuffled-Deck.
+; Description: list of all shuffled cards.
+(define shuffled-deck
+  (shuffle original-deck))
+
+; Variable name: Player1-Name-Variable.
+; Description: name of the first player.
+(define player1-name-variable
+  null)
+
+; Variable name: Player2-Name-Variable.
+; Description: name of the second player.
+(define player2-name-variable
+  null)
+
+; Variable name: Player1-Name-Variable.
+; Description: name of the third player.
+(define player3-name-variable
+  null)
+
+; Variable name: current-player.
+; Description: shows the player whi has the current turn.
+(define current-player
+  0)
+
+; ################
+; BUTTON RESPONSES
+; ################
+
+; Function name: Next-Button-Response.
+; Description: this is the action of the next-button and is responsible for increasing the value of the current-player. 
+; Input: a button instance and a clicked event.
+; Output: void.
+(define (next-button-response button event)
+
+  (cond ((>= current-player 3)
+         (set! current-player 0))
+
+        (else
+         (set! current-player (+ current-player 1)))))
+  
+; Function name: Take-Button-Response.
+; Description: this is the action of the take-button and is responsible for giving new cards tod the players and delete them from the deck. 
+; Input: a button instance and a clicked event.
+; Output: void.
+(define (take-button-response button event)
+
+  (set! players-list (add-card-to-player players-list current-player (car shuffled-deck)))
+
+  (set! shuffled-deck (delete-card shuffled-deck)))
+
+; Function name: Stay-Button-Response.
+; Description: this is the action of the stay-button and is responsible for assigning the stay position of the current player. 
+; Input: a button instance and a clicked event.
+; Output: void.
+(define (stay-button-response button event)
+
+  (set! players-list (set-stay-to-player players-list current-player)))
+
 ; ##########
 ; GUI PANELS
 ; ##########
@@ -127,7 +195,8 @@
                          [label "Next"]
                          [min-width 200]
                          [min-height 30]
-                         [font (make-object font% 15 'default 'normal 'normal)]))
+                         [font (make-object font% 15 'default 'normal 'normal)]
+                         [callback next-button-response]))
 
 ; Take Card Button
 (define take-button (new button%
@@ -135,7 +204,8 @@
                          [label "Take Card"]
                          [min-width 200]
                          [min-height 30]
-                         [font (make-object font% 15 'default 'normal 'normal)]))
+                         [font (make-object font% 15 'default 'normal 'normal)]
+                         [callback take-button-response]))
 
 ; Stay With Current Cards Button
 (define stay-button (new button%
@@ -143,7 +213,8 @@
                          [label "Stay"]
                          [min-width 200]
                          [min-height 30]
-                         [font (make-object font% 15 'default 'normal 'normal)]))
+                         [font (make-object font% 15 'default 'normal 'normal)]
+                         [callback stay-button-response]))
 
 ; Crupier name
 (define crupier-name (new message%
@@ -446,35 +517,6 @@
                                 (string->url "file:/Images/Q-hearts.png"))))
 (define k-hearts (read-bitmap (get-pure-port
                                 (string->url "file:/Images/K-hearts.png"))))
-
-; ####################
-; VARIABLES DEFINITION
-; ####################
-
-; Variable name: Players-List.
-; Description: list of all the players.
-(define players-list
-  null)
-
-; Variable name: Shuffled-Deck.
-; Description: list of all shuffled cards.
-(define shuffled-deck
-  (shuffle original-deck))
-
-; Variable name: Player1-Name-Variable.
-; Description: name of the first player.
-(define player1-name-variable
-  null)
-
-; Variable name: Player2-Name-Variable.
-; Description: name of the second player.
-(define player2-name-variable
-  null)
-
-; Variable name: Player1-Name-Variable.
-; Description: name of the third player.
-(define player3-name-variable
-  null)
 
 ; #############
 ; MAIN FUNCTION
