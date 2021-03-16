@@ -53,6 +53,22 @@
 (define current-player
   0)
 
+; #########
+; FUNCTIONS
+; #########
+
+; Function name: Get-Card.
+; Description: this function returns the last card given to a player.
+; Input: a list and an integer.
+; Output: a string.
+(define (get-card players-list player-number)
+
+  (cond ((equal? player-number (get-player-number (car players-list)))
+         (car (get-player-cards (car players-list))))
+
+        (else
+         (get-card (cdr players-list) player-number))))
+
 ; ################
 ; BUTTON RESPONSES
 ; ################
@@ -68,16 +84,18 @@
 
         (else
          (set! current-player (+ current-player 1)))))
-  
+
 ; Function name: Take-Button-Response.
 ; Description: this is the action of the take-button and is responsible for giving new cards tod the players and delete them from the deck. 
 ; Input: a button instance and a clicked event.
 ; Output: void.
-(define (take-button-response button event)
+(define (take-button-response button event)  
 
   (set! players-list (add-card-to-player players-list current-player (car shuffled-deck)))
 
-  (set! shuffled-deck (delete-card shuffled-deck)))
+  (set! shuffled-deck (delete-card shuffled-deck))
+
+  (add-card current-player (get-card players-list current-player)))
 
 ; Function name: Stay-Button-Response.
 ; Description: this is the action of the stay-button and is responsible for assigning the stay position of the current player. 

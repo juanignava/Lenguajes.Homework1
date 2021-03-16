@@ -18,8 +18,6 @@
     "a-d" "2-d" "3-d" "4-d" "5-d" "6-d" "7-d" "8-d" "9-d" "10-d" "j-d" "q-d" "k-d"
     "a-h" "2-h" "3-h" "4-h" "5-h" "6-h" "7-h" "8-h" "9-h" "10-h" "j-h" "q-h" "k-h"))
 
-
-
 ; Constant name: A-Cards.
 ; Description: list of all A cards in the deck.
 (define a-cards
@@ -145,6 +143,7 @@
 ; Description: this function returns the first element of the given list.
 ; Input: a list.
 ; Output: an integer.
+(provide get-player-number)
 (define (get-player-number player)
   (car player))
 
@@ -152,6 +151,7 @@
 ; Description: this function returns the second element of the given list.
 ; Input: a list.
 ; Output: a list.
+(provide get-player-cards)
 (define (get-player-cards player)
   (cadr player))
 
@@ -212,8 +212,8 @@
 
         ((equal? player-number (get-player-number (car players-list)))
          (cons (list (get-player-number (car players-list))
-                     (append (get-player-cards (car players-list))
-                           card)
+                     (append card
+                             (get-player-cards (car players-list)))
                      (get-player-stay-bit (car players-list))
                      (get-player-name (car players-list)))
                (add-card-to-player-aux (cdr players-list) player-number card)))
@@ -323,7 +323,6 @@
 
         ((member? (car card-list) 9-cards)
          (+ 9 (check-score-aux (cdr card-list))))
-
 
         ((or (member? (car card-list) 10-cards)
              (member? (car card-list) j-cards)
