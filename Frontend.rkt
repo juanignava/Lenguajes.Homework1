@@ -87,17 +87,111 @@
          (set! current-player 0)
          (add-current-player-name)
          (enable-after-next)
-         (set-current-total)
+         (set-current-total current-player)
          (hide-last-total))
 
         (else
          (set! current-player (+ current-player 1))
          (add-current-player-name)
          (enable-after-next)
-         (set-current-total)
-         (hide-last-total))))
+         (set-current-total current-player)
+         (hide-last-total)))
+  
+  (cond ( (everyone-stay? players-list)
+          (send next-button enable #f)
+          (send stay-button enable #f)
+          (send take-button enable #f)
+          (send turn-message set-label "Game Over")
+          (send-everyone-total players-list 0)
+          (check-results))))
+          
+          
+
 
 ;;;;;;;;;
+(define (send-everyone-total list number)
+  (cond ( (null? list))
+        ( else
+          (set-current-total number)
+          (send-everyone-total (cdr list) (+ number 1)))))
+
+(define (check-results)
+  ; Scores
+  (define crupier-score (check-score (get-crupier players-list)))
+  (define player1-score (check-score (get-player1 players-list)))
+  (define player2-score (check-score (get-player2 players-list)))
+  (define player3-score (check-score (get-player3 players-list)))
+  ; Perfect Matches
+  (define crupier-perfect? (perfect-match? (get-crupier players-list)))
+  (define player1-perfect? (perfect-match? (get-player1 players-list)))
+  (define player2-perfect? (perfect-match? (get-player2 players-list)))
+  (define player3-perfect? (perfect-match? (get-player3 players-list)))
+
+  ; Individual results
+  (define player1-result (check-result-aux crupier-score player1-score crupier-perfect? player1-perfect?))
+  (define player2-result (check-result-aux crupier-score player2-score crupier-perfect? player2-perfect?))
+  (define player3-result (check-result-aux crupier-score player3-score crupier-perfect? player3-perfect?))
+  
+  (cond ( (equal? player1-result "Crupier")
+          (send player1-state set-label "You Lost"))
+        ( (equal? player1-result "Player")
+          (send player1-state set-label "You Won"))
+        ( (equal? player1-result "Tie")
+          (send player1-state set-label "You Tied")))
+
+  (cond ( (equal? player2-result "Crupier")
+          (send player2-state set-label "You Lost"))
+        ( (equal? player2-result "Player")
+          (send player2-state set-label "You Won"))
+        ( (equal? player2-result "Tie")
+          (send player2-state set-label "You Tied")))
+
+  (cond ( (equal? player3-result "Crupier")
+          (send player3-state set-label "You Lost"))
+        ( (equal? player3-result "Player")
+          (send player3-state set-label "You Won"))
+        ( (equal? player3-result "Tie")
+          (send player3-state set-label "You Tied"))))
+        
+          
+
+(define (check-result-aux cr-total pl-total cr-perfect pl-perfect)
+
+  (cond ( (> cr-total pl-total)
+          (cond ( (and (> cr-total 21) (> pl-total 21))
+                  "Tie")
+                ( (> cr-total 21)
+                  "Player")
+                ( else "Crupier")))
+        ( (< cr-total pl-total)
+          (cond ( (and (> cr-total 21) (> pl-total 21))
+                  "Tie")
+                ( (> pl-total 21)
+                  "Crupier")
+                ( else "Player")))
+        ( else
+          (cond ( (and cr-perfect pl-perfect)
+                  "Tie")
+                ( cr-perfect "Crupier")
+                ( pl-perfect "Player")
+                ( else "Tie")))))
+                  
+
+(define (perfect-match? player)
+  (cond ( (and (= (check-score player) 21)
+               (= (length (cadr player)) 2))
+          #t)
+        ( else #f)))
+
+(define (everyone-stay? list)
+  (cond ( (null? list)
+          #t)
+        ( (not (stay? players-list (caar list)))
+          #f)
+        ( else
+          (everyone-stay? (cdr list)))))
+          
+
 (define (add-current-player-name)
   (cond ( (= current-player 0)
           (send turn-message set-label "Turn of Crupier"))
@@ -148,14 +242,64 @@
   (set! players-list (add-card-to-player players-list current-player (car shuffled-deck)))
 
   (set! shuffled-deck (delete-card shuffled-deck))
-
+  
+  (update-deck-label)
   (add-card current-player (get-card players-list current-player))
-  (set-current-total)
-  (enable-after-take))
+  (set-current-total current-player)
+  (enable-after-take)
+  (set-stay-over21))
 
 ;;;;
+(define (update-deck-label)
+  (send cards-left set-label
+        (string-append (number->string (length shuffled-deck)) " cards left")))
 
-(define (set-current-total)
+
+(define (set-stay-over21)
+  (cond ( (= current-player 0)
+          (cond ( (> (check-score (get-crupier players-list)) 21)
+                  (set! players-list (set-stay-to-player players-list current-player))
+                  (set-stayed-label)
+                  (send crupier-state set-label "Over 21"))
+                ( (= (check-score (get-crupier players-list)) 21)
+                  (set! players-list (set-stay-to-player players-list current-player))
+                  (set-stayed-label)
+                  (send crupier-state set-label "Crupier has 21!"))
+                ( (>= (check-score (get-crupier players-list)) 17)
+                  (set! players-list (set-stay-to-player players-list current-player))
+                  (set-stayed-label))))
+        
+        ( (= current-player 1)
+          (cond ( (> (check-score (get-player1 players-list)) 21)
+                  (set! players-list (set-stay-to-player players-list current-player))
+                  (set-stayed-label)
+                  (send player1-state set-label "Over 21"))
+                ( (= (check-score (get-player1 players-list)) 21)
+                  (set! players-list (set-stay-to-player players-list current-player))
+                  (set-stayed-label)
+                  (send player1-state set-label "You got 21!"))))
+        
+        ( (= current-player 2)
+          (cond ( (> (check-score (get-player2 players-list)) 21)
+                  (set! players-list (set-stay-to-player players-list current-player))
+                  (set-stayed-label)
+                  (send player2-state set-label "Over 21"))
+                ( (= (check-score (get-player2 players-list)) 21)
+                  (set! players-list (set-stay-to-player players-list current-player))
+                  (set-stayed-label)
+                  (send player2-state set-label "You got 21!"))))
+        
+        ( (= current-player 3)
+          (cond ( (> (check-score (get-player3 players-list)) 21)
+                  (set! players-list (set-stay-to-player players-list current-player))
+                  (set-stayed-label)
+                  (send player3-state set-label "Over 21"))
+                ( (= (check-score (get-player3 players-list)) 21)
+                  (set! players-list (set-stay-to-player players-list current-player))
+                  (set-stayed-label)
+                  (send player3-state set-label "You got 21!"))))))
+
+(define (set-current-total current-player)
   (cond ( (= current-player 0)
           (send crupier-total set-label
                 (string-append "Total: " (number->string
@@ -187,8 +331,23 @@
 (define (stay-button-response button event)
 
   (set! players-list (set-stay-to-player players-list current-player))
-  (enable-after-take))
+  (enable-after-take)
+  (set-stayed-label))
 
+;;;;;;
+(define (set-stayed-label)
+  (cond ( (= current-player 0)
+          (send ver-pane-1.2 add-child crupier-state))
+        ( (= current-player 1)
+          (send ver-pane-2.1 add-child player1-state))
+        ( (= current-player 2)
+          (send ver-pane-2.2 add-child player2-state))
+        ( (= current-player 3)
+          (send ver-pane-2.3 add-child player3-state))))
+  
+
+;(send hor-pane-2 add-child ver-pane-2.3)
+;;;;;;
 
 ; ##########
 ; GUI PANELS
@@ -327,11 +486,6 @@
                           [parent ver-pane-1.2]
                           [label "Crupier"]
                           [font (make-object font% 15 'default 'normal 'normal)]))
-; Player 1 name
-(define player1-name (new message%
-                          [parent ver-pane-2.1]
-                          [label "Player 1"]
-                          [font (make-object font% 15 'default 'normal 'normal)]))
 
 ; Crupier total
 (define crupier-total (new message%
@@ -340,6 +494,19 @@
                           [font (make-object font% 15 'default 'normal 'normal)]
                           [stretchable-width #t]))
 
+; Crupier state
+(define crupier-state (new message%
+                           [parent ver-pane-1.2]
+                           [label "Stayed"]
+                           [font (make-object font% 15 'default 'normal 'normal)]
+                           [style '(deleted)]
+                           [stretchable-width #t]))
+
+; Player 1 name
+(define player1-name (new message%
+                          [parent ver-pane-2.1]
+                          [label "Player 1"]
+                          [font (make-object font% 15 'default 'normal 'normal)]))
 
 ; Player 1 total
 (define player1-total (new message%
@@ -348,7 +515,15 @@
                           [font (make-object font% 15 'default 'normal 'normal)]
                           [stretchable-width #t]))
 
-; Palyer 2 name
+; Player 1 state
+(define player1-state (new message%
+                           [parent ver-pane-2.1]
+                           [label "Stayed"]
+                           [font (make-object font% 15 'default 'normal 'normal)]
+                           [style '(deleted)]
+                           [stretchable-width #t]))
+
+; Player 2 name
 (define player2-name (new message%
                           [parent ver-pane-2.2]
                           [label "Player 2"]
@@ -360,7 +535,15 @@
                           [label "Total : --"]
                           [font (make-object font% 15 'default 'normal 'normal)]
                           [stretchable-width #t]))
-; Palyer 3 name
+; Player 2 state
+(define player2-state (new message%
+                           [parent ver-pane-2.2]
+                           [label "Stayed"]
+                           [font (make-object font% 15 'default 'normal 'normal)]
+                           [style '(deleted)]
+                           [stretchable-width #t]))
+
+; Player 3 name
 (define player3-name (new message%
                           [parent ver-pane-2.3]
                           [label "Player 3"]
@@ -373,6 +556,13 @@
                           [font (make-object font% 15 'default 'normal 'normal)]
                           [stretchable-width #t]))
 
+; Player 3 state
+(define player3-state (new message%
+                           [parent ver-pane-2.3]
+                           [label "Stayed"]
+                           [font (make-object font% 15 'default 'normal 'normal)]
+                           [style '(deleted)]
+                           [stretchable-width #t]))
 
 ; Deck image
 (define deck (read-bitmap (get-pure-port
@@ -385,7 +575,7 @@
 ; Cards in deck
 (define cards-left (new message%
                           [parent ver-pane-1.3]
-                          [label "__ cards left"]
+                          [label "52 cards left"]
                           [font (make-object font% 25 'default 'normal 'normal)]))
 
 
