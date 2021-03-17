@@ -119,19 +119,11 @@
   ; Scores
   (define crupier-score (check-score (get-crupier players-list)))
   (define player1-score (check-score (get-player1 players-list)))
-  (define player2-score (check-score (get-player2 players-list)))
-  (define player3-score (check-score (get-player3 players-list)))
   ; Perfect Matches
   (define crupier-perfect? (perfect-match? (get-crupier players-list)))
   (define player1-perfect? (perfect-match? (get-player1 players-list)))
-  (define player2-perfect? (perfect-match? (get-player2 players-list)))
-  (define player3-perfect? (perfect-match? (get-player3 players-list)))
-
   ; Individual results
   (define player1-result (check-result-aux crupier-score player1-score crupier-perfect? player1-perfect?))
-  (define player2-result (check-result-aux crupier-score player2-score crupier-perfect? player2-perfect?))
-  (define player3-result (check-result-aux crupier-score player3-score crupier-perfect? player3-perfect?))
-  
   (cond ( (equal? player1-result "Crupier")
           (send player1-state set-label "You Lost"))
         ( (equal? player1-result "Player")
@@ -139,19 +131,27 @@
         ( (equal? player1-result "Tie")
           (send player1-state set-label "You Tied")))
 
-  (cond ( (equal? player2-result "Crupier")
-          (send player2-state set-label "You Lost"))
-        ( (equal? player2-result "Player")
-          (send player2-state set-label "You Won"))
-        ( (equal? player2-result "Tie")
-          (send player2-state set-label "You Tied")))
-
-  (cond ( (equal? player3-result "Crupier")
-          (send player3-state set-label "You Lost"))
-        ( (equal? player3-result "Player")
-          (send player3-state set-label "You Won"))
-        ( (equal? player3-result "Tie")
-          (send player3-state set-label "You Tied"))))
+  (cond ( (> (length players-list) 2)
+          (define player2-score (check-score (get-player2 players-list)))
+          (define player2-perfect? (perfect-match? (get-player2 players-list)))
+          (define player2-result (check-result-aux crupier-score player2-score crupier-perfect? player2-perfect?))
+          (cond ( (equal? player2-result "Crupier")
+                  (send player2-state set-label "You Lost"))
+                ( (equal? player2-result "Player")
+                  (send player2-state set-label "You Won"))
+                ( (equal? player2-result "Tie")
+                  (send player2-state set-label "You Tied")))))
+          
+  (cond ( (> (length players-list) 3)
+          (define player3-score (check-score (get-player3 players-list)))
+          (define player3-perfect? (perfect-match? (get-player3 players-list)))
+          (define player3-result (check-result-aux crupier-score player3-score crupier-perfect? player3-perfect?))
+          (cond ( (equal? player3-result "Crupier")
+                  (send player3-state set-label "You Lost"))
+                ( (equal? player3-result "Player")
+                  (send player3-state set-label "You Won"))
+                ( (equal? player3-result "Tie")
+                  (send player3-state set-label "You Tied"))))))
         
           
 
