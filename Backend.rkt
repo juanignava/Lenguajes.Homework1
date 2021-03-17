@@ -26,7 +26,7 @@
 ; Constant name:2-Cards.
 ; Description: list of all 2 cards in the deck.
 (define 2-cards
-  '("2-c" "2-l" "2-d" "-2-h"))
+  '("2-c" "2-l" "2-d" "2-h"))
 
 ; Constant name: 3-Cards.
 ; Description: list of all 3 cards in the deck.
@@ -159,6 +159,7 @@
 ; Description: this function returns the fourth element of the given list.
 ; Input: a list.
 ; Output: a string.
+(provide get-player-name)
 (define (get-player-name player)
   (cadddr player))
 
@@ -310,6 +311,7 @@
 ; Description: this function returns the score from the received player based on his cards. 
 ; Input: a list.
 ; Output: an integer.
+(provide check-score)
 (define (check-score player)
   (check-score-aux (organize-cards (get-player-cards player)) 0))
 

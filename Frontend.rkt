@@ -84,10 +84,60 @@
 (define (next-button-response button event)
 
   (cond ((>= current-player (- (length players-list) 1))
-         (set! current-player 0))
+         (set! current-player 0)
+         (add-current-player-name)
+         (enable-after-next)
+         (set-current-total)
+         (hide-last-total))
 
         (else
-         (set! current-player (+ current-player 1)))))
+         (set! current-player (+ current-player 1))
+         (add-current-player-name)
+         (enable-after-next)
+         (set-current-total)
+         (hide-last-total))))
+
+;;;;;;;;;
+(define (add-current-player-name)
+  (cond ( (= current-player 0)
+          (send turn-message set-label "Turn of Crupier"))
+        ( (= current-player 1)
+          (send turn-message set-label
+                (string-append "Turn of " (get-player-name (get-player1 players-list)))))
+        ( (= current-player 2)
+          (send turn-message set-label
+                (string-append "Turn of " (get-player-name (get-player2 players-list)))))
+        ( (= current-player 3)
+          (send turn-message set-label
+                (string-append "Turn of " (get-player-name (get-player3 players-list)))))))
+
+(define (hide-last-total)
+  (cond ( (= current-player 0)
+          (send player3-total set-label "Total: --"))
+        ( (= current-player 1)
+          (send crupier-total set-label "Total: --"))
+        ( (= current-player 2)
+          (send player1-total set-label "Total: --"))
+        ( (= current-player 3)
+          (send player2-total set-label "Total: --"))))
+
+(define (enable-after-next)
+  (cond ( (stay? players-list current-player)
+          (send stay-button enable #f)
+          (send take-button enable #f)
+          (send next-button enable #t))
+        ( else
+          (send next-button enable #f)
+          (send stay-button enable #t)
+          (send take-button enable #t)))
+  (cond ( (= current-player 0)
+          (send stay-button enable #f))))
+        
+           
+;(send stay-button enable #t)
+;;(send next-button enable #t)
+           ; take-button
+;;;;;;;;;
 
 ; Function name: Take-Button-Response.
 ; Description: this is the action of the take-button and is responsible for giving new cards to the players and delete them from the deck. 
@@ -99,7 +149,36 @@
 
   (set! shuffled-deck (delete-card shuffled-deck))
 
-  (add-card current-player (get-card players-list current-player)))
+  (add-card current-player (get-card players-list current-player))
+  (set-current-total)
+  (enable-after-take))
+
+;;;;
+
+(define (set-current-total)
+  (cond ( (= current-player 0)
+          (send crupier-total set-label
+                (string-append "Total: " (number->string
+                                          (check-score (get-crupier players-list))))))
+        ( (= current-player 1)
+          (send player1-total set-label
+                (string-append "Total: " (number->string
+                                          (check-score (get-player1 players-list))))))
+        ( (= current-player 2)
+          (send player2-total set-label
+                (string-append "Total: " (number->string
+                                          (check-score (get-player2 players-list))))))
+        ( (= current-player 3)
+          (send player3-total set-label
+                (string-append "Total: " (number->string
+                                          (check-score (get-player3 players-list))))))))
+     
+(define (enable-after-take)
+  (send take-button enable #f)
+  (send stay-button enable #f)
+  (send next-button enable #t))
+
+;;;
 
 ; Function name: Stay-Button-Response.
 ; Description: this is the action of the stay-button and is responsible for assigning the stay position of the current player. 
@@ -107,7 +186,9 @@
 ; Output: void.
 (define (stay-button-response button event)
 
-  (set! players-list (set-stay-to-player players-list current-player)))
+  (set! players-list (set-stay-to-player players-list current-player))
+  (enable-after-take))
+
 
 ; ##########
 ; GUI PANELS
@@ -208,8 +289,9 @@
 ; Turn label
 (define turn-message (new message%
                           [parent ver-pane-1.1]
-                          [label "Turn of No.1"]
-                          [font (make-object font% 25 'default 'normal 'normal)])) 
+                          [label "Turn of Crupier"]
+                          [font (make-object font% 25 'default 'normal 'normal)]
+                          [stretchable-width #t])) 
 
 ; Next Player Button
 (define next-button (new button%
@@ -218,7 +300,8 @@
                          [min-width 200]
                          [min-height 30]
                          [font (make-object font% 15 'default 'normal 'normal)]
-                         [callback next-button-response]))
+                         [callback next-button-response]
+                         [enabled #f]))
 
 ; Take Card Button
 (define take-button (new button%
@@ -236,7 +319,8 @@
                          [min-width 200]
                          [min-height 30]
                          [font (make-object font% 15 'default 'normal 'normal)]
-                         [callback stay-button-response]))
+                         [callback stay-button-response]
+                         [enabled #f]))
 
 ; Crupier name
 (define crupier-name (new message%
@@ -252,15 +336,17 @@
 ; Crupier total
 (define crupier-total (new message%
                           [parent ver-pane-1.2]
-                          [label "Total : ___"]
-                          [font (make-object font% 15 'default 'normal 'normal)]))
+                          [label "Total : --"]
+                          [font (make-object font% 15 'default 'normal 'normal)]
+                          [stretchable-width #t]))
 
 
 ; Player 1 total
 (define player1-total (new message%
                           [parent ver-pane-2.1]
-                          [label "Total : ___"]
-                          [font (make-object font% 15 'default 'normal 'normal)]))
+                          [label "Total : --"]
+                          [font (make-object font% 15 'default 'normal 'normal)]
+                          [stretchable-width #t]))
 
 ; Palyer 2 name
 (define player2-name (new message%
@@ -271,8 +357,9 @@
 ; Player 2 total
 (define player2-total (new message%
                           [parent ver-pane-2.2]
-                          [label "Total : ___"]
-                          [font (make-object font% 15 'default 'normal 'normal)]))
+                          [label "Total : --"]
+                          [font (make-object font% 15 'default 'normal 'normal)]
+                          [stretchable-width #t]))
 ; Palyer 3 name
 (define player3-name (new message%
                           [parent ver-pane-2.3]
@@ -282,8 +369,9 @@
 ; Player 3 total
 (define player3-total (new message%
                           [parent ver-pane-2.3]
-                          [label "Total : ___"]
-                          [font (make-object font% 15 'default 'normal 'normal)]))
+                          [label "Total : --"]
+                          [font (make-object font% 15 'default 'normal 'normal)]
+                          [stretchable-width #t]))
 
 
 ; Deck image
