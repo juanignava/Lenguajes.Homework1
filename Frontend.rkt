@@ -73,6 +73,11 @@
 (define current-player
   0)
 
+; Variable first card
+; Description: saves the value of the first card of the crupier
+(define first-card
+  "")
+
 ; ################
 ; BUTTON RESPONSES
 ; ################
@@ -102,6 +107,7 @@
           (send stay-button enable #f)
           (send take-button enable #f)
           (send turn-message set-label "Game Over")
+          (show-hidden-card)
           (send-everyone-total players-list 0)
           (check-results))))
           
@@ -109,11 +115,19 @@
 
 
 ;;;;;;;;;
+(define (show-hidden-card)
+  ;(send hor-pane-1.2.1 set-alignment ('left 'center 'right) ('left 'center 'right))
+  (send hor-pane-1.2.1 delete-child (car (send hor-pane-1.2.1 get-children)))
+  (add-card 0 first-card))
+
 (define (send-everyone-total list number)
   (cond ( (null? list))
         ( else
           (set-current-total number)
-          (send-everyone-total (cdr list) (+ number 1)))))
+          (send-everyone-total (cdr list) (+ number 1))))
+  (send crupier-total set-label
+                (string-append "Total: " (number->string
+                                          (check-score (get-crupier players-list))))))
 
 (define (check-results)
   ; Scores
@@ -237,14 +251,20 @@
 ; Description: this is the action of the take-button and is responsible for giving new cards to the players and delete them from the deck. 
 ; Input: a button instance and a clicked event.
 ; Output: void.
-(define (take-button-response button event)  
-
-  (set! players-list (add-card-to-player players-list current-player (car shuffled-deck)))
-
+(define (take-button-response button event)
+  
+  (cond ( (and (= current-player 0) (= (length (cadar players-list)) 0))
+          (add-card current-player "hidden-card")
+          (set! first-card (car shuffled-deck))
+          (set! players-list (add-card-to-player players-list current-player first-card))
+          )
+        ( else
+          (set! players-list (add-card-to-player players-list current-player (car shuffled-deck)))
+          (add-card current-player (get-card players-list current-player))))
   (set! shuffled-deck (delete-card shuffled-deck))
   
   (update-deck-label)
-  (add-card current-player (get-card players-list current-player))
+  
   (set-current-total current-player)
   (enable-after-take)
   (set-stay-over21))
@@ -260,11 +280,13 @@
           (cond ( (> (check-score (get-crupier players-list)) 21)
                   (set! players-list (set-stay-to-player players-list current-player))
                   (set-stayed-label)
-                  (send crupier-state set-label "Over 21"))
+                  ;(send crupier-state set-label "Over 21"))
+                  )
                 ( (= (check-score (get-crupier players-list)) 21)
                   (set! players-list (set-stay-to-player players-list current-player))
                   (set-stayed-label)
-                  (send crupier-state set-label "Crupier has 21!"))
+                  ;(send crupier-state set-label "Crupier has 21!"))
+                  )
                 ( (>= (check-score (get-crupier players-list)) 17)
                   (set! players-list (set-stay-to-player players-list current-player))
                   (set-stayed-label))))
@@ -302,8 +324,7 @@
 (define (set-current-total current-player)
   (cond ( (= current-player 0)
           (send crupier-total set-label
-                (string-append "Total: " (number->string
-                                          (check-score (get-crupier players-list))))))
+                (string-append "Total: Crupier's game is private")))
         ( (= current-player 1)
           (send player1-total set-label
                 (string-append "Total: " (number->string
@@ -346,7 +367,7 @@
           (send ver-pane-2.3 add-child player3-state))))
   
 
-;(send hor-pane-2 add-child ver-pane-2.3)
+
 ;;;;;;
 
 ; ##########
@@ -708,6 +729,8 @@
           q-hearts)
         ( (equal? card-txt "k-h")
           k-hearts)
+        ( (equal? card-txt "hidden-card")
+          hidden-card)
         ))
 
 ; ######################
@@ -825,6 +848,10 @@
                                 (string->url "file:/Images/Q-hearts.png"))))
 (define k-hearts (read-bitmap (get-pure-port
                                 (string->url "file:/Images/K-hearts.png"))))
+
+; HIDDEN CARD
+(define hidden-card (read-bitmap (get-pure-port
+                                (string->url "file:/Images/hidden-card.png"))))
 
 ; #############
 ; MAIN FUNCTION
