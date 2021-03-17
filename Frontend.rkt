@@ -116,7 +116,7 @@
 
 ;;;;;;;;;
 (define (show-hidden-card)
-  ;(send hor-pane-1.2.1 set-alignment ('left 'center 'right) ('left 'center 'right))
+  ;(send hor-pane-1.2.1 set-alignment 'right 'center)
   (send hor-pane-1.2.1 delete-child (car (send hor-pane-1.2.1 get-children)))
   (add-card 0 first-card))
 
@@ -394,7 +394,8 @@
                           [vert-margin 10]
                           [horiz-margin 10]
                           [alignment '(center center)]
-                          [style '(border)]))
+                          [style '(border)]
+                          [min-width 200]))
 
 ; Crupier Cards Pane 1.2.1
 (define hor-pane-1.2.1 (new horizontal-pane%
