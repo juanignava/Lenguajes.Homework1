@@ -1,89 +1,6 @@
 #lang racket
 
 ; #########
-; CONSTANTS
-; #########
-
-; Constant name: Deck.
-; Description: list of all the different cards.
-; c => Clubs
-; l => Leaves
-; d => Diamonds
-; h => Hearts
-; Value-Symbol
-(provide original-deck)
-(define original-deck
-  '("a-c" "2-c" "3-c" "4-c" "5-c" "6-c" "7-c" "8-c" "9-c" "10-c" "j-c" "q-c" "k-c"
-    "a-l" "2-l" "3-l" "4-l" "5-l" "6-l" "7-l" "8-l" "9-l" "10-l" "j-l" "q-l" "k-l"
-    "a-d" "2-d" "3-d" "4-d" "5-d" "6-d" "7-d" "8-d" "9-d" "10-d" "j-d" "q-d" "k-d"
-    "a-h" "2-h" "3-h" "4-h" "5-h" "6-h" "7-h" "8-h" "9-h" "10-h" "j-h" "q-h" "k-h"))
-
-; Constant name: A-Cards.
-; Description: list of all A cards in the deck.
-(define a-cards
-  '("a-c" "a-l" "a-d" "a-h"))
-
-; Constant name:2-Cards.
-; Description: list of all 2 cards in the deck.
-(define 2-cards
-  '("2-c" "2-l" "2-d" "2-h"))
-
-; Constant name: 3-Cards.
-; Description: list of all 3 cards in the deck.
-(define 3-cards
-  '("3-c" "3-l" "3-d" "3-h"))
-
-; Constant name: 4-Cards.
-; Description: list of all 4 cards in the deck.
-(define 4-cards
-  '("4-c" "4-l" "4-d" "4-h"))
-
-; Constant name: 5-Cards.
-; Description: list of all 5 cards in the deck.
-(define 5-cards
-  '("5-c" "5-l" "5-d" "5-h"))
-
-; Constant name: 6-Cards.
-; Description: list of all 6 cards in the deck.
-(define 6-cards
-  '("6-c" "6-l" "6-d" "6-h"))
-
-; Constant name: 7-Cards.
-; Description: list of all 7 cards in the deck.
-(define 7-cards
-  '("7-c" "7-l" "7-d" "7-h"))
-
-; Constant name: 8-Cards.
-; Description: list of all 8 cards in the deck.
-(define 8-cards
-  '("8-c" "8-l" "8-d" "8-h"))
-
-; Constant name: 9-Cards.
-; Description: list of all A cards in the deck.
-(define 9-cards
-  '("9-c" "9-l" "9-d" "9-h"))
-
-; Constant name: 10-Cards.
-; Description: list of all 10 cards in the deck.
-(define 10-cards
-  '("10-c" "10-l" "10-d" "10-h"))
-
-; Constant name: J-Cards.
-; Description: list of all J cards in the deck.
-(define j-cards
-  '("j-c" "j-l" "j-d" "j-h"))
-
-; Constant name: Q-Cards.
-; Description: list of all Q cards in the deck.
-(define q-cards
-  '("q-c" "q-l" "q-d" "q-h"))
-
-; Constant name: K-Cards.
-; Description: list of all K cards in the deck.
-(define k-cards
-  '("k-c" "k-l" "k-d" "k-h"))
-
-; #########
 ; FUNCTIONS
 ; #########
 
@@ -297,7 +214,7 @@
   (cond ((null? card-list)
          organized-list)
 
-        ((member? (car card-list) a-cards)
+        ((member? (car card-list) '("a-c" "a-l" "a-d" "a-h"))
          (organize-cards-aux (cdr card-list)
                              (append organized-list
                                      (list (car card-list)))))
@@ -320,7 +237,7 @@
   (cond ((null? card-list)
          score)
         
-        ((member? (car card-list) a-cards)
+        ((member? (car card-list) '("a-c" "a-l" "a-d" "a-h"))
 
          (cond ((> (+ score 11) 21)
                 (check-score-aux (cdr card-list) (+ 1 score)))
@@ -328,32 +245,32 @@
                (else
                 (check-score-aux (cdr card-list) (+ 11 score)))))        
 
-        ((member? (car card-list) 2-cards)
+        ((member? (car card-list) '("2-c" "2-l" "2-d" "2-h"))
          (check-score-aux (cdr card-list) (+ 2 score)))        
 
-        ((member? (car card-list) 3-cards)
+        ((member? (car card-list) '("3-c" "3-l" "3-d" "3-h"))
          (check-score-aux (cdr card-list) (+ 3 score)))
 
-        ((member? (car card-list) 4-cards)
+        ((member? (car card-list) '("4-c" "4-l" "4-d" "4-h"))
          (check-score-aux (cdr card-list) (+ 4 score)))
 
-        ((member? (car card-list) 5-cards)
+        ((member? (car card-list) '("5-c" "5-l" "5-d" "5-h"))
          (check-score-aux (cdr card-list) (+ 5 score)))
 
-        ((member? (car card-list) 6-cards)
+        ((member? (car card-list) '("6-c" "6-l" "6-d" "6-h"))
          (check-score-aux (cdr card-list) (+ 6 score)))
 
-        ((member? (car card-list) 7-cards)
+        ((member? (car card-list) '("7-c" "7-l" "7-d" "7-h"))
          (check-score-aux (cdr card-list) (+ 7 score)))
 
-        ((member? (car card-list) 8-cards)
+        ((member? (car card-list) '("8-c" "8-l" "8-d" "8-h"))
          (check-score-aux (cdr card-list) (+ 8 score)))
 
-        ((member? (car card-list) 9-cards)
+        ((member? (car card-list) '("9-c" "9-l" "9-d" "9-h"))
          (check-score-aux (cdr card-list) (+ 9 score)))
 
-        ((or (member? (car card-list) 10-cards)
-             (member? (car card-list) j-cards)
-             (member? (car card-list) q-cards)
-             (member? (car card-list) k-cards))
+        ((or (member? (car card-list) '("10-c" "10-l" "10-d" "10-h"))
+             (member? (car card-list) '("j-c" "j-l" "j-d" "j-h"))
+             (member? (car card-list) '("q-c" "q-l" "q-d" "q-h"))
+             (member? (car card-list) '("k-c" "k-l" "k-d" "k-h")))
          (check-score-aux (cdr card-list) (+ 10 score)))))

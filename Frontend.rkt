@@ -20,6 +20,24 @@
                        [alignment '(left top)]))
 
 ; #########
+; CONSTANTS
+; #########
+
+; Constant name: Deck.
+; Description: list of all the different cards.
+; c => Clubs
+; l => Leaves
+; d => Diamonds
+; h => Hearts
+; Value-Symbol
+(provide original-deck)
+(define original-deck
+  '("a-c" "2-c" "3-c" "4-c" "5-c" "6-c" "7-c" "8-c" "9-c" "10-c" "j-c" "q-c" "k-c"
+    "a-l" "2-l" "3-l" "4-l" "5-l" "6-l" "7-l" "8-l" "9-l" "10-l" "j-l" "q-l" "k-l"
+    "a-d" "2-d" "3-d" "4-d" "5-d" "6-d" "7-d" "8-d" "9-d" "10-d" "j-d" "q-d" "k-d"
+    "a-h" "2-h" "3-h" "4-h" "5-h" "6-h" "7-h" "8-h" "9-h" "10-h" "j-h" "q-h" "k-h"))
+
+; #########
 ; FUNCTIONS
 ; #########
 
