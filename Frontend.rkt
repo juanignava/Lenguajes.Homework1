@@ -23,6 +23,10 @@
 ; FUNCTIONS
 ; #########
 
+; Function name:Add Names
+; Description: sets the names of the players in the respective label of the GUI
+; Input: number of players
+; Output: void
 (define (add-names num-of-players)
   (cond ( (= num-of-players 1)
           (send player1-name set-label player1-name-variable))
@@ -69,7 +73,7 @@
   null)
 
 ; Variable name: current-player.
-; Description: shows the player whi has the current turn.
+; Description: shows the player who has the current turn.
 (define current-player
   0)
 
@@ -88,20 +92,19 @@
 ; Output: void.
 (define (next-button-response button event)
 
+  ; define current player
   (cond ((>= current-player (- (length players-list) 1))
-         (set! current-player 0)
-         (add-current-player-name)
-         (enable-after-next)
-         (set-current-total current-player)
-         (hide-last-total))
-
+         (set! current-player 0))
         (else
-         (set! current-player (+ current-player 1))
-         (add-current-player-name)
-         (enable-after-next)
-         (set-current-total current-player)
-         (hide-last-total)))
-  
+         (set! current-player (+ current-player 1))))
+
+  ; auxiliar funtions for changing the turn
+  (add-current-player-name)
+  (enable-after-next)
+  (set-current-total current-player)
+  (hide-last-total)
+
+  ; checks if the game has finished
   (cond ( (everyone-stay? players-list)
           (send next-button enable #f)
           (send stay-button enable #f)
@@ -111,15 +114,19 @@
           (send-everyone-total players-list 0)
           (check-results))))
           
-          
-
-
-;;;;;;;;;
+; Function name: Show Hidden Card.
+; Description: turns the crupier's hidden card around (happens at the end of the game).
+; Input: void.
+; Output: void.
 (define (show-hidden-card)
-  ;(send hor-pane-1.2.1 set-alignment 'right 'center)
   (send hor-pane-1.2.1 delete-child (car (send hor-pane-1.2.1 get-children)))
   (add-card 0 first-card))
 
+; Function name: Send Everyone Total.
+; Description: changes the respective labels with the player's
+; total score (happens at the end of the game)
+; Input: the list of players and the number of the player to update.
+; Output. void.
 (define (send-everyone-total list number)
   (cond ( (null? list))
         ( else
@@ -129,22 +136,31 @@
                 (string-append "Total: " (number->string
                                           (check-score (get-crupier players-list))))))
 
+; Function name: Check Results.
+; Description: determines the final results of the game, based on the game rules,
+; the results are shown in the GUI with the words "Tied", "Lost" or "Won"
+; Input: void.
+; Output: void.
 (define (check-results)
+  ; Definition of important variables
   ; Scores
   (define crupier-score (check-score (get-crupier players-list)))
   (define player1-score (check-score (get-player1 players-list)))
-  ; Perfect Matches
+  ; Perfect Matches (an A with a 10 value card)
   (define crupier-perfect? (perfect-match? (get-crupier players-list)))
   (define player1-perfect? (perfect-match? (get-player1 players-list)))
   ; Individual results
   (define player1-result (check-result-aux crupier-score player1-score crupier-perfect? player1-perfect?))
+
+  ; Gets the result for player 1
   (cond ( (equal? player1-result "Crupier")
           (send player1-state set-label "You Lost"))
         ( (equal? player1-result "Player")
           (send player1-state set-label "You Won"))
         ( (equal? player1-result "Tie")
           (send player1-state set-label "You Tied")))
-
+  
+  ; Gets the result for player 2 (if there is so)
   (cond ( (> (length players-list) 2)
           (define player2-score (check-score (get-player2 players-list)))
           (define player2-perfect? (perfect-match? (get-player2 players-list)))
@@ -155,7 +171,8 @@
                   (send player2-state set-label "You Won"))
                 ( (equal? player2-result "Tie")
                   (send player2-state set-label "You Tied")))))
-          
+  
+  ; Gets the result for player 3 (if there is so)
   (cond ( (> (length players-list) 3)
           (define player3-score (check-score (get-player3 players-list)))
           (define player3-perfect? (perfect-match? (get-player3 players-list)))
@@ -168,7 +185,13 @@
                   (send player3-state set-label "You Tied"))))))
         
           
-
+; Function name: Check Results Auxiliar.
+; Description: Gicen the total scores and the perfect matches, compares
+; the given player with the crupier to determine who won.
+; Inputs: total score of the crupier, total score of the given player,
+; boolean that indicates if the crupier has a perfect play and another boolean
+; for the player.
+; Output: A string that indicates if the player won, lost or tied the match.
 (define (check-result-aux cr-total pl-total cr-perfect pl-perfect)
 
   (cond ( (> cr-total pl-total)
@@ -190,13 +213,22 @@
                 ( pl-perfect "Player")
                 ( else "Tie")))))
                   
-
+; Function name: Perfect Match?
+; Description: Determines if a player got a perfect match (a 21 using
+; and A card and a card with value 10).
+; Input: a list with the player's information.
+; Output: a boolean that says if there is a perfect match.
 (define (perfect-match? player)
   (cond ( (and (= (check-score player) 21)
                (= (length (cadr player)) 2))
           #t)
         ( else #f)))
 
+; Function name: Everyone Stay?
+; Description: indicates if every player in the game is in the stay condition.
+; if true the game must stop.
+; Input: player's list with their information.
+; Output: a boolean with the result.
 (define (everyone-stay? list)
   (cond ( (null? list)
           #t)
@@ -205,7 +237,10 @@
         ( else
           (everyone-stay? (cdr list)))))
           
-
+; Function name: Add Current Player Name.
+; Description: updates the current player label.
+; Input: void.
+; Output: void.
 (define (add-current-player-name)
   (cond ( (= current-player 0)
           (send turn-message set-label "Turn of Crupier"))
@@ -219,6 +254,11 @@
           (send turn-message set-label
                 (string-append "Turn of " (get-player-name (get-player3 players-list)))))))
 
+; Function name: Hide Last Total
+; Description: hides the total score of the last player after
+; hitting the next button.
+; Input: void.
+; Output: void.
 (define (hide-last-total)
   (cond ( (= current-player 0)
           (send player3-total set-label "Total: --"))
@@ -229,6 +269,11 @@
         ( (= current-player 3)
           (send player2-total set-label "Total: --"))))
 
+; Function name: Enable After Next.
+; Description: enables and disables the necesary buttons after
+; hitting the next buttons, this helps the flow of the game.
+; Input: void.
+; Output: void.
 (define (enable-after-next)
   (cond ( (stay? players-list current-player)
           (send stay-button enable #f)
@@ -239,54 +284,54 @@
           (send stay-button enable #t)
           (send take-button enable #t)))
   (cond ( (= current-player 0)
-          (send stay-button enable #f))))
-        
-           
-;(send stay-button enable #t)
-;;(send next-button enable #t)
-           ; take-button
-;;;;;;;;;
+          (send stay-button enable #f))))        
 
 ; Function name: Take-Button-Response.
 ; Description: this is the action of the take-button and is responsible for giving new cards to the players and delete them from the deck. 
 ; Input: a button instance and a clicked event.
 ; Output: void.
 (define (take-button-response button event)
-  
+
+  ; checks if it corresponds to the hidden card.
   (cond ( (and (= current-player 0) (= (length (cadar players-list)) 0))
           (add-card current-player "hidden-card")
           (set! first-card (car shuffled-deck))
-          (set! players-list (add-card-to-player players-list current-player first-card))
-          )
+          (set! players-list (add-card-to-player players-list current-player first-card)))
+        
         ( else
           (set! players-list (add-card-to-player players-list current-player (car shuffled-deck)))
           (add-card current-player (get-card players-list current-player))))
+
+  ; Auxiliar functions after hitting the take button.
   (set! shuffled-deck (delete-card shuffled-deck))
-  
-  (update-deck-label)
-  
+  (update-deck-label)  
   (set-current-total current-player)
   (enable-after-take)
   (set-stay-over21))
 
-;;;;
+; Function Name: Update Deck Label.
+; Description: updates the text of the cards left (decreses one card
+; every time someone takes a card).
+; Input: void.
+; Output: void. 
 (define (update-deck-label)
   (send cards-left set-label
         (string-append (number->string (length shuffled-deck)) " cards left")))
 
-
+; Function Name: Set Stay Over21?
+; Description: sets the stay state for a player that gets more than 21 as a total.
+; Input: void
+; Output: void. 
 (define (set-stay-over21)
   (cond ( (= current-player 0)
           (cond ( (> (check-score (get-crupier players-list)) 21)
                   (set! players-list (set-stay-to-player players-list current-player))
-                  (set-stayed-label)
-                  ;(send crupier-state set-label "Over 21"))
-                  )
+                  (set-stayed-label))
+                
                 ( (= (check-score (get-crupier players-list)) 21)
                   (set! players-list (set-stay-to-player players-list current-player))
-                  (set-stayed-label)
-                  ;(send crupier-state set-label "Crupier has 21!"))
-                  )
+                  (set-stayed-label))
+                
                 ( (>= (check-score (get-crupier players-list)) 17)
                   (set! players-list (set-stay-to-player players-list current-player))
                   (set-stayed-label))))
@@ -296,6 +341,7 @@
                   (set! players-list (set-stay-to-player players-list current-player))
                   (set-stayed-label)
                   (send player1-state set-label "Over 21"))
+                
                 ( (= (check-score (get-player1 players-list)) 21)
                   (set! players-list (set-stay-to-player players-list current-player))
                   (set-stayed-label)
@@ -306,6 +352,7 @@
                   (set! players-list (set-stay-to-player players-list current-player))
                   (set-stayed-label)
                   (send player2-state set-label "Over 21"))
+                
                 ( (= (check-score (get-player2 players-list)) 21)
                   (set! players-list (set-stay-to-player players-list current-player))
                   (set-stayed-label)
@@ -316,11 +363,16 @@
                   (set! players-list (set-stay-to-player players-list current-player))
                   (set-stayed-label)
                   (send player3-state set-label "Over 21"))
+                
                 ( (= (check-score (get-player3 players-list)) 21)
                   (set! players-list (set-stay-to-player players-list current-player))
                   (set-stayed-label)
                   (send player3-state set-label "You got 21!"))))))
 
+; Function name: Set Currente Total.
+; Description: adds the label of the total for the curent player.
+; Input: the number of the current player.
+; Output: void.
 (define (set-current-total current-player)
   (cond ( (= current-player 0)
           (send crupier-total set-label
@@ -337,13 +389,17 @@
           (send player3-total set-label
                 (string-append "Total: " (number->string
                                           (check-score (get-player3 players-list))))))))
-     
+
+; Function name: Enable After Take.
+; Description: enables or disables the necessary
+; buttons after hitting the take button.
+; Input: void.
+; Output: void.
 (define (enable-after-take)
   (send take-button enable #f)
   (send stay-button enable #f)
   (send next-button enable #t))
 
-;;;
 
 ; Function name: Stay-Button-Response.
 ; Description: this is the action of the stay-button and is responsible for assigning the stay position of the current player. 
@@ -355,7 +411,10 @@
   (enable-after-take)
   (set-stayed-label))
 
-;;;;;;
+; Function name: Set Stayed Label.
+; Description: activates the stayed label for the current player.
+; Input: void.
+; Output: void.
 (define (set-stayed-label)
   (cond ( (= current-player 0)
           (send ver-pane-1.2 add-child crupier-state))
@@ -365,10 +424,7 @@
           (send ver-pane-2.2 add-child player2-state))
         ( (= current-player 3)
           (send ver-pane-2.3 add-child player3-state))))
-  
 
-
-;;;;;;
 
 ; ##########
 ; GUI PANELS
@@ -615,6 +671,7 @@
         ( (equal? player-number 3)
           (add-card-aux hor-pane-2.3.1 card-txt))
         ))
+
 ; Auxiliar function of add-card
 (define (add-card-aux pane card)
   (void (new message%
@@ -859,20 +916,25 @@
 ; #############
 
 ; Function name: BCEJ.
-; Description: this function starts the game.
-; Input: a list.
+; Description: this function starts the game with the names
+; of the players.
+; Restriction: There must be 1, 2 or 3 players in the game.
+; Input: a list with the names of the players.
 ; Output: void.
 (define (bCEj players-names)  
   (bCEj-aux players-names my-window))
 
+; Auxiliar function of BCEJ.
 (define (bCEj-aux players-names frame)
   (cond ((null? players-names)
-         "Error")
+         "Error: no players added")
         ((> (length players-names) 3)
-         "Error: solo se permiten 3 jugadores")
+         "Error: Can't begin the game with more than 3 players")
         ( else
+          ; create the list of the players.
           (set! players-list (create-players-list players-names))
 
+          ; set the names variables.
           (cond ((equal? (length players-names) 1)
                  (set! player1-name-variable (car players-names)))
 
