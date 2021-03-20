@@ -5,7 +5,8 @@
 ; #########
 
 ; Function name: Length.
-; Description: this function is in charge of count how many elements a given list has.
+; Description: this function is in charge of count how many elements the given
+;              list has.
 ; Input: a list.
 ; Output: an integer.
 (provide length)
@@ -81,9 +82,10 @@
   (cadddr player))
 
 ; Function name: Create-Players-List.
-; Description: this function returns a list of lists with all required players parameters.
+; Description: this function returns a list of lists with all required players
+;              information.
 ; Input: a list.
-; Output: a string or a list.
+; Output: a list.
 (provide create-players-list)
 (define (create-players-list players-list)
     
@@ -151,7 +153,7 @@
          (member? card (cdr card-list)))))
 
 ; Function name: Set-Stay-To-Player.
-; Description: this function change the stay bit of the plsyer to 1.
+; Description: this function change the stay bit of the player to 1.
 ; Input: a list and an integer.
 ; Output: a list.
 (provide set-stay-to-player)
@@ -184,7 +186,7 @@
         (else
          (get-card (cdr players-list) player-number))))
 
-; Function name: Get-Card.
+; Function name: Stay?.
 ; Description: this function checks if the received player is already stay.
 ; Input: a list and an integer.
 ; Output: a boolean.
@@ -203,7 +205,8 @@
           (stay? (cdr players-list) player-number))))
 
 ; Function name: Organize-Cards.
-; Description: this function is in charge of organizing the received card-list so that the As cards end up at the end of the list. 
+; Description: this function is in charge of organizing the received card-list so
+;              that the As cards end up at the end of the list. 
 ; Input: a list.
 ; Output: a list.
 (define (organize-cards card-list)
@@ -225,7 +228,8 @@
                                      organized-list)))))
                                 
 ; Function name: Check-Score.
-; Description: this function returns the score from the received player based on his cards. 
+; Description: this function returns the score from the received player based on
+;              his cards. 
 ; Input: a list.
 ; Output: an integer.
 (provide check-score)
